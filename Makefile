@@ -25,7 +25,7 @@ lintfix:
 bundle:
 	-rm -rf ./dist
 	-mkdir dist
-	microbundle --no-compress --target node --strict --name ${GLOBAL_NAME}
+	npx microbundle --no-compress --target node --strict --name ${GLOBAL_NAME}
 	node support/prependHeader.js
 
 test:

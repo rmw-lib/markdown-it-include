@@ -20,27 +20,26 @@ function _extends() {
   return _extends.apply(this, arguments);
 }
 
-const path = require('path');
+const path = require("path");
 
-const fs = require('fs');
+const fs = require("fs");
 
-const INCLUDE_RE = /!{3}\s*include(.+?)!{3}/i;
-const BRACES_RE = /\((.+?)\)/i;
+const INCLUDE_RE = /#include\s(.+)/;
 
 const include_plugin = (md, options) => {
   const defaultOptions = {
-    root: '.',
+    root: ".",
     getRootDir: (pluginOptions
     /*, state, startLine, endLine*/
     ) => pluginOptions.root,
     includeRe: INCLUDE_RE,
     throwError: true,
     bracesAreOptional: false,
-    notFoundMessage: 'File \'{{FILE}}\' not found.',
-    circularMessage: 'Circular reference between \'{{FILE}}\' and \'{{PARENT}}\'.'
+    notFoundMessage: "File {{FILE}} not found.",
+    circularMessage: "Circular reference between {{FILE}} and {{PARENT}}"
   };
 
-  if (typeof options === 'string') {
+  if (typeof options === "string") {
     options = _extends({}, defaultOptions, {
       root: options
     });
@@ -59,29 +58,15 @@ const include_plugin = (md, options) => {
 
     while (cap = options.includeRe.exec(src)) {
       let includePath = cap[1].trim();
-      const sansBracesMatch = BRACES_RE.exec(includePath);
+      console.log(includePath);
+      filePath = path.resolve(rootdir, includePath); // check if child file exists or if there is a circular reference
 
-      if (!sansBracesMatch && !options.bracesAreOptional) {
-        errorMessage = `INCLUDE statement '${src.trim()}' MUST have '()' braces around the include path ('${includePath}')`;
-      } else if (sansBracesMatch) {
-        includePath = sansBracesMatch[1].trim();
-      } else if (!/^\s/.test(cap[1])) {
-        // path SHOULD have been preceeded by at least ONE whitespace character!
-
-        /* eslint max-len: "off" */
-        errorMessage = `INCLUDE statement '${src.trim()}': when not using braces around the path ('${includePath}'), it MUST be preceeded by at least one whitespace character to separate the include keyword and the include path.`;
-      }
-
-      if (!errorMessage) {
-        filePath = path.resolve(rootdir, includePath); // check if child file exists or if there is a circular reference
-
-        if (!fs.existsSync(filePath)) {
-          // child file does not exist
-          errorMessage = options.notFoundMessage.replace('{{FILE}}', filePath);
-        } else if (filesProcessed.indexOf(filePath) !== -1) {
-          // reference would be circular
-          errorMessage = options.circularMessage.replace('{{FILE}}', filePath).replace('{{PARENT}}', parentFilePath);
-        }
+      if (!fs.existsSync(filePath)) {
+        // child file does not exist
+        errorMessage = options.notFoundMessage.replace("{{FILE}}", filePath);
+      } else if (filesProcessed.indexOf(filePath) !== -1) {
+        // reference would be circular
+        errorMessage = options.circularMessage.replace("{{FILE}}", filePath).replace("{{PARENT}}", parentFilePath);
       } // check if there were any errors
 
 
@@ -93,7 +78,7 @@ const include_plugin = (md, options) => {
         mdSrc = `\n\n# INCLUDE ERROR: ${errorMessage}\n\n`;
       } else {
         // get content of child file
-        mdSrc = fs.readFileSync(filePath, 'utf8'); // check if child file also has includes
+        mdSrc = fs.readFileSync(filePath, "utf8").trim(); // check if child file also has includes
 
         mdSrc = _replaceIncludeByContent(mdSrc, path.dirname(filePath), filePath, filesProcessed); // remove one trailing newline, if it exists: that way, the included content does NOT
         // automatically terminate the paragraph it is in due to the writer of the included
@@ -101,12 +86,6 @@ const include_plugin = (md, options) => {
         // However, when that snippet writer terminated with TWO (or more) newlines, these, minus one,
         // will be merged with the newline after the #include statement, resulting in a 2-NL paragraph
         // termination.
-
-        const len = mdSrc.length;
-
-        if (mdSrc[len - 1] === '\n') {
-          mdSrc = mdSrc.substring(0, len - 1);
-        }
       } // replace include by file content
 
 
@@ -122,7 +101,7 @@ const include_plugin = (md, options) => {
     state.src = _replaceIncludeByContent(state.src, options.getRootDir(options, state, startLine, endLine));
   };
 
-  md.core.ruler.before('normalize', 'include', _includeFileParts);
+  md.core.ruler.before("normalize", "include", _includeFileParts);
 };
 
 module.exports = include_plugin;
