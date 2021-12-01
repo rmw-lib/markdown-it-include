@@ -40,7 +40,6 @@ const include_plugin = (md, options) => {
 
     while (cap = options.includeRe.exec(src)) {
       let includePath = cap[1].trim();
-      console.log(includePath);
       filePath = path.resolve(rootdir, includePath); // check if child file exists or if there is a circular reference
 
       if (!fs.existsSync(filePath)) {
