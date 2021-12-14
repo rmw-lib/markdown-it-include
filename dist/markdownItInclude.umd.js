@@ -23,26 +23,26 @@
     return _extends.apply(this, arguments);
   }
 
-  const path = require("path");
+  const path = require('path');
 
-  const fs = require("fs");
+  const fs = require('fs');
 
-  const INCLUDE_RE = /#include\s(.+)/;
+  const INCLUDE_RE = /\n(\s*)#include\s(.+)/;
 
   const include_plugin = (md, options) => {
     const defaultOptions = {
-      root: ".",
+      root: '.',
       getRootDir: (pluginOptions
       /*, state, startLine, endLine*/
       ) => pluginOptions.root,
       includeRe: INCLUDE_RE,
       throwError: true,
       bracesAreOptional: false,
-      notFoundMessage: "File {{FILE}} not found.",
-      circularMessage: "Circular reference between {{FILE}} and {{PARENT}}"
+      notFoundMessage: 'File {{FILE}} not found.',
+      circularMessage: 'Circular reference between {{FILE}} and {{PARENT}}'
     };
 
-    if (typeof options === "string") {
+    if (typeof options === 'string') {
       options = _extends({}, defaultOptions, {
         root: options
       });
@@ -60,15 +60,16 @@
       }
 
       while (cap = options.includeRe.exec(src)) {
-        let includePath = cap[1].trim();
+        let space = cap[1];
+        let includePath = cap[2].trim();
         filePath = path.resolve(rootdir, includePath); // check if child file exists or if there is a circular reference
 
         if (!fs.existsSync(filePath)) {
           // child file does not exist
-          errorMessage = options.notFoundMessage.replace("{{FILE}}", filePath);
+          errorMessage = options.notFoundMessage.replace('{{FILE}}', filePath);
         } else if (filesProcessed.indexOf(filePath) !== -1) {
           // reference would be circular
-          errorMessage = options.circularMessage.replace("{{FILE}}", filePath).replace("{{PARENT}}", parentFilePath);
+          errorMessage = options.circularMessage.replace('{{FILE}}', filePath).replace('{{PARENT}}', parentFilePath);
         } // check if there were any errors
 
 
@@ -80,7 +81,18 @@
           mdSrc = `\n\n# INCLUDE ERROR: ${errorMessage}\n\n`;
         } else {
           // get content of child file
-          mdSrc = fs.readFileSync(filePath, "utf8").trim(); // check if child file also has includes
+          mdSrc = fs.readFileSync(filePath, 'utf8').trim();
+
+          if (space) {
+            mdSrc = mdSrc.split('\n').map((x, pos) => {
+              if (pos) {
+                x = space + x;
+              }
+
+              return x;
+            }).join('\n');
+          } // check if child file also has includes
+
 
           mdSrc = _replaceIncludeByContent(mdSrc, path.dirname(filePath), filePath, filesProcessed); // remove one trailing newline, if it exists: that way, the included content does NOT
           // automatically terminate the paragraph it is in due to the writer of the included
@@ -103,7 +115,7 @@
       state.src = _replaceIncludeByContent(state.src, options.getRootDir(options, state, startLine, endLine));
     };
 
-    md.core.ruler.before("normalize", "include", _includeFileParts);
+    md.core.ruler.before('normalize', 'include', _includeFileParts);
   };
 
   module.exports = include_plugin;
