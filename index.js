@@ -66,13 +66,10 @@ const include_plugin = (md, options) => {
         // get content of child file
         mdSrc = fs.readFileSync(filePath, 'utf8').trim();
         if (space) {
-          mdSrc = mdSrc
+          mdSrc = '\n' + mdSrc
             .split('\n')
             .map((x, pos) => {
-              if (pos) {
-                x = space + x;
-              }
-              return x;
+              x = space + x;
             })
             .join('\n');
         }

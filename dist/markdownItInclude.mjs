@@ -1,5 +1,3 @@
-/*! markdown-it-include 2.0.0 https://github.com//camelaissani/markdown-it-include @license MIT */
-
 function _extends() {
   _extends = Object.assign || function (target) {
     for (var i = 1; i < arguments.length; i++) {
@@ -79,12 +77,7 @@ const include_plugin = (md, options) => {
         mdSrc = fs.readFileSync(filePath, 'utf8').trim();
 
         if (space) {
-          mdSrc = mdSrc.split('\n').map((x, pos) => {
-            if (pos) {
-              x = space + x;
-            }
-
-            return x;
+          mdSrc = '\n' + mdSrc.split('\n').map((x, pos) => {
           }).join('\n');
         } // check if child file also has includes
 
