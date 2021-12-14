@@ -81,8 +81,7 @@ const include_plugin = (md, options) => {
         mdSrc = fs.readFileSync(filePath, 'utf8').trim();
 
         if (space) {
-          mdSrc = '\n' + mdSrc.split('\n').map((x, pos) => {
-          }).join('\n');
+          mdSrc = '\n' + mdSrc.split('\n').map((x, pos) => space + x).join('\n');
         } // check if child file also has includes
 
 

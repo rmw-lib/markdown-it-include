@@ -66,12 +66,12 @@ const include_plugin = (md, options) => {
         // get content of child file
         mdSrc = fs.readFileSync(filePath, 'utf8').trim();
         if (space) {
-          mdSrc = '\n' + mdSrc
-            .split('\n')
-            .map((x, pos) => {
-              x = space + x;
-            })
-            .join('\n');
+          mdSrc =
+            '\n' +
+            mdSrc
+              .split('\n')
+              .map((x, pos) => space + x)
+              .join('\n');
         }
         // check if child file also has includes
         mdSrc = _replaceIncludeByContent(
