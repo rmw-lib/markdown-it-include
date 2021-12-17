@@ -1,4 +1,4 @@
-/*! markdown-it-include 2.0.0 https://github.com//camelaissani/markdown-it-include @license MIT */
+/*! markdown-it-include 2.0.1 https://github.com//camelaissani/markdown-it-include @license MIT */
 
 'use strict';
 
@@ -81,11 +81,11 @@ const include_plugin = (md, options) => {
         mdSrc = fs.readFileSync(filePath, 'utf8').trim();
 
         if (space) {
-          mdSrc = '\n' + mdSrc.split('\n').map((x, pos) => space + x).join('\n');
+          mdSrc = mdSrc.split('\n').map((x, pos) => space + x).join('\n');
         } // check if child file also has includes
 
 
-        mdSrc = _replaceIncludeByContent(mdSrc, path.dirname(filePath), filePath, filesProcessed); // remove one trailing newline, if it exists: that way, the included content does NOT
+        mdSrc = '\n' + _replaceIncludeByContent(mdSrc, path.dirname(filePath), filePath, filesProcessed); // remove one trailing newline, if it exists: that way, the included content does NOT
         // automatically terminate the paragraph it is in due to the writer of the included
         // part having terminated the content with a newline.
         // However, when that snippet writer terminated with TWO (or more) newlines, these, minus one,
