@@ -1,4 +1,4 @@
-/*! markdown-it-include 2.0.1 https://github.com//camelaissani/markdown-it-include @license MIT */
+/*! markdown-it-include 2.0.2 https://github.com//camelaissani/markdown-it-include @license MIT */
 
 'use strict';
 
@@ -24,7 +24,7 @@ const path = require('path');
 
 const fs = require('fs');
 
-const INCLUDE_RE = /\n(\s*)#include\s(.+)/;
+const INCLUDE_RE = /\n(\s*)#include\s([^"]+)/;
 
 const include_plugin = (md, options) => {
   const defaultOptions = {
