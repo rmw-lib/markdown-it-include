@@ -6,7 +6,7 @@ cd $_DIR
 
 set -ex
 
-npm run prepare
+make bundle
 
 version=$(cat package.json|jq -r '.version')
 
