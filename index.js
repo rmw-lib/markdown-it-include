@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const INCLUDE_RE = /\n(\s*)#include\s([^"]+)/;
+const INCLUDE_RE = /\n(\s*)#include\s([^"\n\r]+)/;
 
 const include_plugin = (md, options) => {
   const defaultOptions = {
